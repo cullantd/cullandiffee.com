@@ -1,12 +1,24 @@
 name: Deploy to S3 bucket
 on: [push]
+permissions:
+  id-token: write
+  contents: read# This is required for actions/checkout@v2
 jobs:
   run:
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ap-northeast-1
     steps:
+    
+        - name: configureawscredentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            role-to-assume: arn:aws:iam::3**********0:role/github-actions-role
+            role-session-name: samplerolesession
+            aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
         - uses: actions/checkout@v3
 
         - name: Install dependencies
